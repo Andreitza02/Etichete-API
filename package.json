@@ -1,0 +1,17 @@
+{
+  "name": "etichete-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Excel upload assistant for electrical tag extraction using OpenAI Responses API and code interpreter.",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "multer": "^2.1.1",
+    "openai": "^6.29.0"
+  }
+}
