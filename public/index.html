@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Etichete EPLAN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <nav class="topbar" aria-label="Informații aplicație">
+          <span class="brand-mark">EE</span>
+          <span class="topbar-label">Instrument intern pentru etichete EPLAN</span>
+        </nav>
+
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Prelucrare Excel EPLAN</p>
+            <h1>
+              <span>Etichete EPLAN</span>
+              <img class="hero-title-icon" src="/eplan-icon.svg" alt="EPLAN" />
+            </h1>
+            <p class="lead">
+              Încarcă un fișier `.xlsx` exportat din EPLAN și generează fișierul final
+              cu etichete, borne, cabluri și echipamente, pregătit pentru verificare
+              și descărcare în Excel.
+            </p>
+          </div>
+
+          <div class="hero-summary" aria-label="Flux de lucru">
+            <div>
+              <span class="summary-number">01</span>
+              <span class="summary-text">Încarci fișierul EPLAN</span>
+            </div>
+            <div>
+              <span class="summary-number">02</span>
+              <span class="summary-text">Aplicația procesează foile relevante</span>
+            </div>
+            <div>
+              <span class="summary-number">03</span>
+              <span class="summary-text">Descarci Excel-ul generat</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <div class="upload-column">
+          <section class="card upload-card upload-panel">
+            <div class="card-intro">
+              <p class="section-kicker">Flux activ</p>
+              <h2>Încărcare fișier Etichete</h2>
+              <p>Aplicația acceptă un singur fișier `.xlsx` și procesează toate foile relevante.</p>
+            </div>
+
+            <form class="upload-form">
+              <label class="field file-field">
+                <span class="field-label">Fișier Excel</span>
+                <span class="file-drop">
+                  <span class="file-token" aria-hidden="true">
+                    <img src="/excel-icon.svg" alt="" />
+                  </span>
+                  <span class="file-copy">
+                    <strong>Alege fișierul exportat din EPLAN</strong>
+                    <small>Un singur fișier `.xlsx`, maximum 50 MB.</small>
+                  </span>
+                  <span class="file-name">Niciun fișier selectat</span>
+                </span>
+                <input class="upload-files" name="files" type="file" accept=".xlsx" required />
+              </label>
+
+              <div class="form-actions">
+                <button class="submit-button" type="submit">Generează etichete</button>
+                <button class="cancel-button secondary-button danger-button" type="button" hidden disabled>
+                  Anulează analiza
+                </button>
+              </div>
+            </form>
+
+            <p class="status idle upload-status">Selectează un fișier `.xlsx` pentru procesare.</p>
+          </section>
+
+          <section class="card upload-card soon-card" aria-disabled="true">
+            <div class="card-intro">
+              <p class="section-kicker">În curând</p>
+              <h2>Încărcare fișier Consum</h2>
+              <p>Fluxul pentru fișiere de consum este pregătit pentru activare ulterioară.</p>
+            </div>
+
+            <div class="field">
+              <span class="field-label">Fișier Excel</span>
+              <div class="fake-file-input" aria-hidden="true">
+                <span class="fake-file-button">Alege fișierul</span>
+                <span class="fake-file-name">Funcționalitate indisponibilă momentan</span>
+              </div>
+            </div>
+
+            <button class="submit-button" type="button" disabled>În curând</button>
+          </section>
+        </div>
+
+        <div class="results-column">
+          <section class="card results-card">
+            <div class="section-heading">
+              <div>
+                <p class="section-kicker">Rezultate</p>
+                <h2>Fișiere generate</h2>
+              </div>
+              <p>
+                După procesare vei primi fișierul Excel generat, pregătit pentru descărcare.
+              </p>
+            </div>
+            <div id="results" class="results-grid" aria-live="polite">
+              <div class="empty-state">
+                <strong>Nu există fișiere procesate încă.</strong>
+                <span>Încarcă un fișier `.xlsx` pentru a începe generarea etichetelor.</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="card process-card process-panel" data-process-state="idle">
+            <div class="process-header">
+              <div>
+                <p class="section-kicker">Stare procesare</p>
+                <h2>Monitorizare lucrare</h2>
+              </div>
+              <span id="processBadge" class="process-badge idle">În așteptare</span>
+            </div>
+
+            <div class="process-steps" aria-label="Pași procesare">
+              <div class="process-step">
+                <span class="step-dot"></span>
+                <div>
+                  <strong>Validare fișier</strong>
+                  <span>Verificare format `.xlsx` și pregătire pentru procesare.</span>
+                </div>
+              </div>
+              <div class="process-step">
+                <span class="step-dot"></span>
+                <div>
+                  <strong>Extracție etichete</strong>
+                  <span>Citire foi relevante, borne, cabluri și echipamente.</span>
+                </div>
+              </div>
+              <div class="process-step">
+                <span class="step-dot"></span>
+                <div>
+                  <strong>Generare Excel</strong>
+                  <span>Rezultatul final apare în zona de descărcare.</span>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

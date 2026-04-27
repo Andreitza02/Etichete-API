@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Excel">
+  <defs>
+    <linearGradient id="sheetBase" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#27ae72"/>
+      <stop offset="1" stop-color="#1f9d5f"/>
+    </linearGradient>
+    <linearGradient id="foldShade" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#9bd9bd"/>
+      <stop offset="1" stop-color="#6cc49b"/>
+    </linearGradient>
+  </defs>
+  <path fill="url(#sheetBase)" d="M112 0h200l88 88 40 52v300c0 40-32 72-72 72H112c-40 0-72-32-72-72V72c0-40 32-72 72-72Z"/>
+  <path fill="#1b8550" d="M312 0v82c0 32 26 58 58 58h70L312 0Z"/>
+  <path fill="url(#foldShade)" d="M312 0v82c0 32 26 58 58 58h70L312 0Z" opacity=".85"/>
+  <path fill="#000000" d="M312 82c0 32 26 58 58 58h70v92L312 104V82Z" opacity=".12"/>
+  <rect x="146" y="254" width="220" height="162" rx="16" fill="#ffffff"/>
+  <rect x="168" y="276" width="60" height="27" fill="#24a366"/>
+  <rect x="248" y="276" width="82" height="27" fill="#24a366"/>
+  <rect x="168" y="324" width="60" height="27" fill="#24a366"/>
+  <rect x="248" y="324" width="82" height="27" fill="#24a366"/>
+  <rect x="168" y="372" width="60" height="27" fill="#24a366"/>
+  <rect x="248" y="372" width="82" height="27" fill="#24a366"/>
+</svg>
