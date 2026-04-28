@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1900 360" role="img" aria-label="DMT Marine Equipment 25 years of building trust">
+  <g fill="#8C9091">
+    <text x="0" y="120" font-family="Arial Black, Impact, sans-serif" font-size="180" font-weight="900">DMT</text>
+    <text x="0" y="214" font-family="Arial Black, Impact, sans-serif" font-size="86" font-weight="900">MARINE EQUIPMENT</text>
+    <text x="1325" y="154" font-family="Arial Black, Impact, sans-serif" font-size="188" font-weight="900">25</text>
+    <text x="1630" y="117" font-family="Arial Black, Impact, sans-serif" font-size="54" font-weight="900">YEARS</text>
+    <text x="1246" y="214" font-family="Arial Black, Impact, sans-serif" font-size="62" font-weight="900">OF BUILDING TRUST</text>
+  </g>
+  <path fill="#C2D500" d="M1584 0h156v52h-156z"/>
+  <path fill="#C2D500" d="M1554 42c88 0 158 62 170 142h-112c-13-23-37-38-67-38-43 0-76 33-76 76s33 76 76 76c31 0 56-16 69-42h113c-16 83-87 144-173 144-99 0-179-80-179-179s80-179 179-179z"/>
+  <rect x="0" y="90" width="90" height="62" fill="#C2D500"/>
+  <rect x="0" y="308" width="510" height="44" fill="#C2D500"/>
+  <rect x="530" y="308" width="140" height="44" fill="#8C9091"/>
+  <rect x="690" y="308" width="140" height="44" fill="#C2D500"/>
+  <rect x="850" y="308" width="140" height="44" fill="#8C9091"/>
+  <rect x="1010" y="308" width="140" height="44" fill="#C2D500"/>
+  <rect x="300" y="242" width="850" height="32" fill="#8C9091"/>
+</svg>

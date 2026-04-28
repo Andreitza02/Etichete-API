@@ -10,6 +10,8 @@ const uploadPanels = Array.from(document.querySelectorAll(".upload-panel")).map(
 const resultsElement = document.querySelector("#results");
 const processPanel = document.querySelector(".process-panel");
 const processBadge = document.querySelector("#processBadge");
+const logoutButton = document.querySelector("#logoutButton");
+const loginSuccessScreen = document.querySelector("#loginSuccessScreen");
 
 let activeJobId = null;
 let pollTimer = null;
@@ -18,23 +20,23 @@ let selectedFile = null;
 
 const processStates = {
   idle: {
-    badge: "În așteptare",
+    badge: "Waiting",
     badgeClass: "idle"
   },
   processing: {
-    badge: "În procesare",
+    badge: "Processing",
     badgeClass: "working"
   },
   success: {
-    badge: "Finalizat",
+    badge: "Completed",
     badgeClass: "success"
   },
   cancelled: {
-    badge: "Anulat",
+    badge: "Cancelled",
     badgeClass: "cancelled"
   },
   error: {
-    badge: "Eroare",
+    badge: "Error",
     badgeClass: "error"
   }
 };
@@ -61,6 +63,34 @@ function setProcessState(state) {
   if (processBadge) {
     processBadge.textContent = content.badge;
     processBadge.className = `process-badge ${content.badgeClass}`;
+  }
+}
+
+function showLoginSuccessAnimation() {
+  if (!loginSuccessScreen || sessionStorage.getItem("showLoginSuccess") !== "true") {
+    return;
+  }
+
+  sessionStorage.removeItem("showLoginSuccess");
+  loginSuccessScreen.hidden = false;
+
+  window.setTimeout(() => {
+    loginSuccessScreen.classList.add("is-leaving");
+  }, 1150);
+
+  window.setTimeout(() => {
+    loginSuccessScreen.hidden = true;
+    loginSuccessScreen.classList.remove("is-leaving");
+  }, 1650);
+}
+
+async function handleLogoutClick() {
+  try {
+    await fetch("/api/logout", {
+      method: "POST"
+    });
+  } finally {
+    window.location.href = "/login";
   }
 }
 
@@ -115,7 +145,7 @@ function setFileInputFiles(fileInput, files) {
 }
 
 function updateFileNameDisplay() {
-  const fileName = selectedFile?.name ?? "Niciun fișier selectat";
+  const fileName = selectedFile?.name ?? "No file selected";
 
   for (const panel of uploadPanels) {
     if (panel.fileNameElement) {
@@ -162,10 +192,10 @@ async function readApiPayload(response) {
       return rawText ? JSON.parse(rawText) : {};
     } catch {
       if (!response.ok) {
-        throw new Error(`Serverul a returnat JSON invalid (${response.status}).`);
+        throw new Error(`Server returned invalid JSON (${response.status}).`);
       }
 
-      throw new Error("Serverul a returnat un răspuns JSON invalid.");
+      throw new Error("Server returned an invalid JSON response.");
     }
   }
 
@@ -174,11 +204,11 @@ async function readApiPayload(response) {
 
     if (response.status === 404 && normalized.startsWith("Not Found")) {
       throw new Error(
-        "Endpoint-ul API nu a fost găsit. Pe Render, aplicația trebuie publicată ca Web Service, nu ca Static Site."
+        "The API endpoint was not found. On Render, this app must be deployed as a Web Service, not as a Static Site."
       );
     }
 
-    throw new Error(normalized || `Cererea a eșuat (${response.status}).`);
+    throw new Error(normalized || `The request failed (${response.status}).`);
   }
 
   if (!rawText.trim()) {
@@ -188,7 +218,7 @@ async function readApiPayload(response) {
   try {
     return JSON.parse(rawText);
   } catch {
-    throw new Error("Serverul a returnat un răspuns non-JSON.");
+    throw new Error("Server returned a non-JSON response.");
   }
 }
 
@@ -207,38 +237,38 @@ function formatElapsed(seconds) {
   }
 
   if (seconds < 60) {
-    return `${seconds}s scurse`;
+    return `${seconds}s elapsed`;
   }
 
   const minutes = Math.floor(seconds / 60);
   const remainder = seconds % 60;
-  return `${minutes}m ${remainder}s scurse`;
+  return `${minutes}m ${remainder}s elapsed`;
 }
 
 function describeResult(result) {
   if (result.status === "queued") {
-    return "Fișierul așteaptă pornirea procesării.";
+    return "The file is waiting for processing to start.";
   }
 
   if (result.status === "cancelling") {
-    return "Se anulează cererea.";
+    return "Cancelling the request.";
   }
 
   if (result.status === "processing") {
     const parts = [];
 
     if (result.stage === "uploading_to_openai") {
-      parts.push("Fișierul se încarcă pentru prelucrare.");
+      parts.push("The file is being uploaded for processing.");
     } else if (result.stage === "uploaded_to_openai") {
-      parts.push("Fișierul a fost încărcat și este pregătit pentru analiză.");
+      parts.push("The file has been uploaded and is ready for analysis.");
     } else if (result.stage === "response_created") {
-      parts.push("Analiza a pornit.");
+      parts.push("Analysis has started.");
     } else if (result.stage === "waiting_for_openai") {
-      parts.push("Se extrag etichetele și se pregătește fișierul final.");
+      parts.push("Labels are being extracted and the final file is being prepared.");
     } else if (result.stage === "finalizing_output") {
-      parts.push("Se finalizează rezultatul pentru descărcare.");
+      parts.push("Finalizing the result for download.");
     } else {
-      parts.push("Fișierul este în procesare.");
+      parts.push("The file is being processed.");
     }
 
     const elapsed = formatElapsed(result.elapsedSeconds);
@@ -250,25 +280,25 @@ function describeResult(result) {
   }
 
   if (result.status === "cancelled") {
-    return "Analiza a fost anulată înainte de generarea fișierului.";
+    return "The analysis was cancelled before the file was generated.";
   }
 
   if (result.status === "failed") {
-    return result.error || "Procesarea fișierului a eșuat.";
+    return result.error || "File processing failed.";
   }
 
   if (result.generatedFile) {
-    return "Fișierul Excel este gata pentru descărcare.";
+    return "The Excel file is ready for download.";
   }
 
-  return "Procesarea s-a finalizat, dar fișierul Excel nu este disponibil.";
+  return "Processing finished, but the Excel file is not available.";
 }
 
 function renderEmptyState() {
   resultsElement.innerHTML = `
     <div class="empty-state">
-      <strong>Nu există fișiere procesate încă.</strong>
-      <span>Încarcă un fișier \`.xlsx\` pentru a începe generarea etichetelor.</span>
+      <strong>No processed files yet.</strong>
+      <span>Upload a \`.xlsx\` file to start generating labels.</span>
     </div>
   `;
 }
@@ -292,24 +322,24 @@ function renderResults(results) {
 
       const badgeLabel =
         result.status === "queued"
-          ? "În așteptare"
+          ? "Waiting"
           : result.status === "processing"
-            ? "În procesare"
+            ? "Processing"
             : result.status === "cancelling"
-              ? "Se anulează"
+              ? "Cancelling"
               : result.status === "completed"
-                ? "Finalizat"
+                ? "Completed"
                 : result.status === "cancelled"
-                  ? "Anulat"
-                  : "Eroare";
+                  ? "Cancelled"
+                  : "Error";
 
       const actions =
         result.status === "completed" && result.generatedFile
           ? `<a class="download-link" href="${escapeHtml(result.generatedFile.url)}" download="${escapeHtml(
               result.generatedFile.filename
-            )}">Descarcă fișierul generat</a>`
+            )}">Download generated file</a>`
           : result.status === "completed"
-            ? '<span class="download-link disabled">Fișier Excel indisponibil</span>'
+            ? '<span class="download-link disabled">Excel file unavailable</span>'
             : "";
 
       const copyClass =
@@ -325,7 +355,7 @@ function renderResults(results) {
         <article class="result-card ${result.status === "failed" ? "error" : ""}">
           <div class="result-header">
             <div>
-              <span class="result-label">Fișier procesat</span>
+              <span class="result-label">Processed file</span>
               <h3>${escapeHtml(result.inputFilename)}</h3>
             </div>
             <span class="badge ${badgeClass}">${badgeLabel}</span>
@@ -350,7 +380,7 @@ function updateCancelButton(job = null) {
     }
 
     panel.cancelButton.hidden = !canShow;
-    panel.cancelButton.textContent = job?.status === "cancelling" ? "Se anulează..." : "Anulează analiza";
+    panel.cancelButton.textContent = job?.status === "cancelling" ? "Cancelling..." : "Cancel analysis";
     panel.cancelButton.disabled = !canShow || job?.status === "cancelling";
   }
 }
@@ -359,21 +389,21 @@ function updateStatusFromJob(job) {
   const primaryResult = Array.isArray(job.results) ? job.results[0] : null;
 
   if (job.status === "queued") {
-    setStatus("Lucrarea este în așteptare. Fișierul este pregătit.", "working");
+    setStatus("The job is waiting. The file is ready.", "working");
     setProcessState("processing");
     updateCancelButton(job);
     return;
   }
 
   if (job.status === "processing") {
-    setStatus("Fișierul este în procesare.", "working");
+    setStatus("The file is being processed.", "working");
     setProcessState("processing");
     updateCancelButton(job);
     return;
   }
 
   if (job.status === "cancelling") {
-    setStatus("Se anulează cererea.", "working");
+    setStatus("Cancelling the request.", "working");
     setProcessState("processing");
     updateCancelButton(job);
     return;
@@ -381,10 +411,10 @@ function updateStatusFromJob(job) {
 
   if (job.status === "completed") {
     if (primaryResult?.generatedFile) {
-      setStatus("Procesare finalizată. Fișierul este gata.", "success");
+      setStatus("Processing completed. The file is ready.", "success");
       setProcessState("success");
     } else {
-      setStatus("Procesarea s-a finalizat, dar fișierul nu este disponibil.", "error");
+      setStatus("Processing finished, but the file is not available.", "error");
       setProcessState("error");
     }
     updateCancelButton(null);
@@ -392,20 +422,20 @@ function updateStatusFromJob(job) {
   }
 
   if (job.status === "completed_with_errors") {
-    setStatus("Procesarea s-a finalizat cu erori.", "error");
+    setStatus("Processing finished with errors.", "error");
     setProcessState("error");
     updateCancelButton(null);
     return;
   }
 
   if (job.status === "cancelled") {
-    setStatus("Analiza a fost anulată.", "idle");
+    setStatus("Analysis was cancelled.", "idle");
     setProcessState("cancelled");
     updateCancelButton(null);
     return;
   }
 
-  setStatus("Lucrarea nu a putut fi finalizată.", "error");
+  setStatus("The job could not be completed.", "error");
   setProcessState("error");
   updateCancelButton(null);
 }
@@ -422,7 +452,7 @@ async function pollJob(jobId) {
     const job = await readApiPayload(response);
 
     if (!response.ok) {
-      throw new Error(job.error || "Nu s-a putut citi starea procesării.");
+      throw new Error(job.error || "Could not read the processing status.");
     }
 
     renderResults(job.results || []);
@@ -441,7 +471,7 @@ async function pollJob(jobId) {
     }, 3000);
   } catch (error) {
     setStatus(
-      error instanceof Error ? error.message : "A apărut o problemă la actualizarea stării.",
+      error instanceof Error ? error.message : "A problem occurred while updating the status.",
       "error"
     );
     setProcessState("error");
@@ -460,11 +490,11 @@ async function loadHealth() {
     const data = await readApiPayload(response);
 
     if (!data.openaiConfigured) {
-      setStatus("Aplicația nu este configurată complet pentru procesare.", "error");
+      setStatus("The app is not fully configured for processing.", "error");
       setProcessState("error");
     }
   } catch {
-    setStatus("Nu s-a putut verifica disponibilitatea aplicației.", "error");
+    setStatus("Could not verify app availability.", "error");
     setProcessState("error");
   }
 }
@@ -475,7 +505,7 @@ async function handleUploadSubmit(event) {
   const file = getSelectedFile();
 
   if (!file) {
-    setStatus("Selectează un fișier `.xlsx`.", "error");
+    setStatus("Select a `.xlsx` file.", "error");
     setProcessState("idle");
     return;
   }
@@ -488,7 +518,7 @@ async function handleUploadSubmit(event) {
   formData.append("files", file);
 
   setSubmitDisabled(true);
-  setStatus("Fișierul este trimis spre procesare...", "working");
+  setStatus("The file is being sent for processing...", "working");
   setProcessState("processing");
 
   try {
@@ -499,7 +529,7 @@ async function handleUploadSubmit(event) {
     const payload = await readApiPayload(response);
 
     if (!response.ok) {
-      throw new Error(payload.error || "Cererea nu a putut fi procesată.");
+      throw new Error(payload.error || "The request could not be processed.");
     }
 
     activeJobId = payload.id;
@@ -507,7 +537,7 @@ async function handleUploadSubmit(event) {
     updateStatusFromJob(payload);
     void pollJob(payload.id);
   } catch (error) {
-    setStatus(error instanceof Error ? error.message : "Cererea a eșuat.", "error");
+    setStatus(error instanceof Error ? error.message : "The request failed.", "error");
     setProcessState("error");
     setSubmitDisabled(false);
     updateCancelButton(null);
@@ -525,10 +555,10 @@ async function handleCancelClick() {
     }
 
     panel.cancelButton.disabled = true;
-    panel.cancelButton.textContent = "Se anulează...";
+    panel.cancelButton.textContent = "Cancelling...";
   }
 
-  setStatus("Se anulează cererea...", "working");
+  setStatus("Cancelling the request...", "working");
 
   try {
     const response = await fetch(`/api/jobs/${activeJobId}/cancel`, {
@@ -537,7 +567,7 @@ async function handleCancelClick() {
     const payload = await readApiPayload(response);
 
     if (!response.ok) {
-      throw new Error(payload.error || "Nu s-a putut anula analiza.");
+      throw new Error(payload.error || "Could not cancel the analysis.");
     }
 
     renderResults(payload.results || []);
@@ -553,7 +583,7 @@ async function handleCancelClick() {
 
     void pollJob(payload.id);
   } catch (error) {
-    setStatus(error instanceof Error ? error.message : "Nu s-a putut anula analiza.", "error");
+    setStatus(error instanceof Error ? error.message : "Could not cancel the analysis.", "error");
     updateCancelButton(activeJobId ? { id: activeJobId, status: "processing" } : null);
   }
 }
@@ -563,12 +593,12 @@ function handleFileChange(fileInput) {
 
   if (getSelectedFile()) {
     setProcessState("idle");
-    setStatus("Fișierul este pregătit pentru procesare.", "idle");
+    setStatus("The file is ready for processing.", "idle");
   } else {
     selectedFile = null;
     updateFileNameDisplay();
     setProcessState("idle");
-    setStatus("Selectează un fișier `.xlsx`.", "idle");
+    setStatus("Select a `.xlsx` file.", "idle");
   }
 }
 
@@ -580,7 +610,10 @@ for (const panel of uploadPanels) {
   });
 }
 
+logoutButton?.addEventListener("click", handleLogoutClick);
+
 updateFileNameDisplay();
 updateCancelButton(null);
 setProcessState("idle");
+showLoginSuccessAnimation();
 void loadHealth();

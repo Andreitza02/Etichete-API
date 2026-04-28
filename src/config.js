@@ -22,6 +22,10 @@ export const config = {
   openaiTimeoutMs: toInt(process.env.OPENAI_TIMEOUT_MS, 900000),
   responseTimeoutMs: toInt(process.env.RESPONSE_TIMEOUT_MS, 900000),
   pollIntervalMs: toInt(process.env.POLL_INTERVAL_MS, 3000),
+  authUsername: process.env.AUTH_USERNAME ?? "",
+  authPassword: process.env.AUTH_PASSWORD ?? "",
+  authSessionSecret: process.env.AUTH_SESSION_SECRET ?? "",
+  authSessionMaxAgeMs: toInt(process.env.AUTH_SESSION_MAX_AGE_MS, 8 * 60 * 60 * 1000),
   uploadLimitBytes: 50 * 1024 * 1024,
   uploadsDir: path.join(projectRoot, "storage", "uploads"),
   generatedDir: path.join(projectRoot, "storage", "generated")

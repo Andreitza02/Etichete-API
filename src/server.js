@@ -1,6 +1,6 @@
 import path from "node:path";
 import { unlink } from "node:fs/promises";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID, timingSafeEqual } from "node:crypto";
 
 import express from "express";
 import multer from "multer";
@@ -18,6 +18,17 @@ await ensureDir(config.generatedDir);
 
 const app = express();
 const jobs = new Map();
+const sessions = new Map();
+const publicDir = path.join(config.projectRoot, "public");
+const sessionCookieName = "dmt_ai_session";
+const loginAssetPaths = new Set([
+  "/styles.css",
+  "/login.js",
+  "/eplan-icon.svg",
+  "/excel-icon.svg",
+  "/Anniversary logo - 25 years.png",
+  "/Anniversary%20logo%20-%2025%20years.png"
+]);
 
 const upload = multer({
   dest: config.uploadsDir,
@@ -35,6 +46,167 @@ const upload = multer({
 });
 
 app.use(express.json());
+
+function hashValue(value) {
+  return createHash("sha256").update(String(value)).digest();
+}
+
+function secureEquals(left, right) {
+  return timingSafeEqual(hashValue(left), hashValue(right));
+}
+
+function parseCookies(cookieHeader = "") {
+  const cookies = new Map();
+
+  for (const part of cookieHeader.split(";")) {
+    const [rawName, ...rawValue] = part.trim().split("=");
+
+    if (!rawName || !rawValue.length) {
+      continue;
+    }
+
+    cookies.set(rawName, decodeURIComponent(rawValue.join("=")));
+  }
+
+  return cookies;
+}
+
+function getSessionToken(req) {
+  return parseCookies(req.headers.cookie).get(sessionCookieName) ?? null;
+}
+
+function getSession(req) {
+  const token = getSessionToken(req);
+
+  if (!token) {
+    return null;
+  }
+
+  const session = sessions.get(token);
+
+  if (!session) {
+    return null;
+  }
+
+  if (Date.now() - session.createdAt > config.authSessionMaxAgeMs) {
+    sessions.delete(token);
+    return null;
+  }
+
+  session.lastSeenAt = Date.now();
+  return { token, session };
+}
+
+function setSessionCookie(res, token) {
+  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
+
+  res.setHeader(
+    "Set-Cookie",
+    `${sessionCookieName}=${encodeURIComponent(token)}; HttpOnly; SameSite=Lax; Path=/; Max-Age=${Math.floor(
+      config.authSessionMaxAgeMs / 1000
+    )}${secure}`
+  );
+}
+
+function clearSessionCookie(res) {
+  res.setHeader(
+    "Set-Cookie",
+    `${sessionCookieName}=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0`
+  );
+}
+
+function isAuthenticated(req) {
+  return Boolean(getSession(req));
+}
+
+function authBypass(req) {
+  if (req.path === "/login" || req.path === "/api/login" || req.path === "/api/session") {
+    return true;
+  }
+
+  if (req.method === "GET" && loginAssetPaths.has(req.path)) {
+    return true;
+  }
+
+  return false;
+}
+
+function requireAuth(req, res, next) {
+  if (authBypass(req) || isAuthenticated(req)) {
+    next();
+    return;
+  }
+
+  if (req.path.startsWith("/api") || req.path.startsWith("/downloads")) {
+    res.status(401).json({
+      error: "Authentication required."
+    });
+    return;
+  }
+
+  res.redirect("/login");
+}
+
+app.get("/login", (req, res) => {
+  if (isAuthenticated(req)) {
+    res.redirect("/");
+    return;
+  }
+
+  res.sendFile(path.join(publicDir, "login.html"));
+});
+
+app.post("/api/login", (req, res) => {
+  const username = String(req.body?.username ?? "");
+  const password = String(req.body?.password ?? "");
+  const hasConfig = Boolean(config.authUsername && config.authPassword);
+
+  if (
+    !hasConfig ||
+    !secureEquals(username, config.authUsername) ||
+    !secureEquals(password, config.authPassword)
+  ) {
+    res.status(401).json({
+      error: "Invalid username or password."
+    });
+    return;
+  }
+
+  const token = randomUUID();
+  sessions.set(token, {
+    username: config.authUsername,
+    createdAt: Date.now(),
+    lastSeenAt: Date.now()
+  });
+  setSessionCookie(res, token);
+
+  res.json({
+    ok: true,
+    username: config.authUsername
+  });
+});
+
+app.get("/api/session", (req, res) => {
+  const current = getSession(req);
+
+  res.json({
+    authenticated: Boolean(current),
+    username: current?.session.username ?? null
+  });
+});
+
+app.post("/api/logout", (req, res) => {
+  const token = getSessionToken(req);
+
+  if (token) {
+    sessions.delete(token);
+  }
+
+  clearSessionCookie(res);
+  res.json({ ok: true });
+});
+
+app.use(requireAuth);
 app.use("/downloads", express.static(config.generatedDir, { index: false }));
 
 app.get("/api/health", (_req, res) => {
@@ -352,7 +524,7 @@ app.use("/api", (_req, res) => {
   });
 });
 
-app.use(express.static(path.join(config.projectRoot, "public")));
+app.use(express.static(publicDir));
 
 app.use((error, _req, res, _next) => {
   const isUploadError =

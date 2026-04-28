@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="login-body">
+    <main class="login-shell">
+      <section class="login-card" aria-labelledby="loginTitle">
+        <img
+          class="login-logo"
+          src="/Anniversary%20logo%20-%2025%20years.png"
+          alt="DMT Marine Equipment - 25 years of building trust"
+        />
+
+        <div class="login-heading">
+          <p class="section-kicker">AI EPLAN Labels</p>
+          <h1 id="loginTitle">Log In</h1>
+        </div>
+
+        <form id="loginForm" class="login-form" novalidate>
+          <label class="login-field">
+            <span>Username</span>
+            <input id="username" name="username" type="text" autocomplete="username" required />
+          </label>
+
+          <label class="login-field">
+            <span>Password</span>
+            <input id="password" name="password" type="password" autocomplete="current-password" required />
+          </label>
+
+          <div class="login-row">
+            <button id="forgotPassword" class="forgot-link" type="button" data-tooltip="Ask Cucu Andrei">
+              Forgot Password
+            </button>
+          </div>
+
+          <p id="loginError" class="login-error" role="alert" hidden>Invalid username or password.</p>
+
+          <button class="login-submit" type="submit">Log in</button>
+        </form>
+      </section>
+    </main>
+
+    <div id="resetModal" class="reset-modal" hidden>
+      <section class="reset-panel" role="dialog" aria-modal="true" aria-labelledby="resetTitle">
+        <h2 id="resetTitle">Reset Password</h2>
+        <p>Contact Cucu Andrei to reset access for this internal tool.</p>
+        <div class="reset-actions">
+          <button id="resetPasswordButton" type="button">Reset Password</button>
+          <button id="cancelResetButton" class="secondary-button" type="button">Cancel</button>
+        </div>
+      </section>
+    </div>
+
+    <script type="module" src="/login.js"></script>
+  </body>
+</html>

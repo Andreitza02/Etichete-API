@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="EPLAN">
-  <rect width="512" height="512" rx="26" fill="#e40046"/>
+  <rect width="512" height="512" rx="26" fill="#C2D500"/>
   <g fill="#ffffff" transform="rotate(18 256 256)">
     <rect x="112" y="90" width="70" height="236" rx="35"/>
     <rect x="222" y="90" width="70" height="332" rx="35"/>

@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="ro">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Etichete EPLAN</title>
+    <title>AI EPLAN Labels</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -15,37 +15,40 @@
   <body>
     <div class="page-shell">
       <header class="hero">
-        <nav class="topbar" aria-label="Informații aplicație">
-          <span class="brand-mark">EE</span>
-          <span class="topbar-label">Instrument intern pentru etichete EPLAN</span>
+        <nav class="topbar" aria-label="Company logo">
+          <img class="topbar-logo" src="/Anniversary%20logo%20-%2025%20years.png" alt="DMT Marine Equipment - 25 years of building trust" />
+          <button id="logoutButton" class="logout-button" type="button">Log out</button>
         </nav>
 
         <div class="hero-grid">
           <div class="hero-copy">
-            <p class="eyebrow">Prelucrare Excel EPLAN</p>
+            <p class="eyebrow">EPLAN Excel Processing</p>
             <h1>
-              <span>Etichete EPLAN</span>
+              <span>AI EPLAN Labels</span>
               <img class="hero-title-icon" src="/eplan-icon.svg" alt="EPLAN" />
             </h1>
             <p class="lead">
-              Încarcă un fișier `.xlsx` exportat din EPLAN și generează fișierul final
-              cu etichete, borne, cabluri și echipamente, pregătit pentru verificare
-              și descărcare în Excel.
+              AI Automation: upload one `.xlsx` file exported from EPLAN and generate the final Excel file
+              with labels, terminals, cables, and equipment, ready for review and download.
             </p>
           </div>
 
-          <div class="hero-summary" aria-label="Flux de lucru">
+          <div class="hero-summary" aria-label="Workflow">
             <div>
               <span class="summary-number">01</span>
-              <span class="summary-text">Încarci fișierul EPLAN</span>
+              <span class="summary-text">Upload Excel from Eplan</span>
             </div>
             <div>
               <span class="summary-number">02</span>
-              <span class="summary-text">Aplicația procesează foile relevante</span>
+              <span class="summary-text">The app processes relevant sheets</span>
             </div>
             <div>
               <span class="summary-number">03</span>
-              <span class="summary-text">Descarci Excel-ul generat</span>
+              <span class="summary-text">Download the generated Excel file</span>
+            </div>
+            <div>
+              <span class="summary-number">04</span>
+              <span class="summary-text">Save 1-2 hours on every project</span>
             </div>
           </div>
         </div>
@@ -55,54 +58,54 @@
         <div class="upload-column">
           <section class="card upload-card upload-panel">
             <div class="card-intro">
-              <p class="section-kicker">Flux activ</p>
-              <h2>Încărcare fișier Etichete</h2>
-              <p>Aplicația acceptă un singur fișier `.xlsx` și procesează toate foile relevante.</p>
+              <p class="section-kicker">Active flow</p>
+              <h2>Upload Labels File</h2>
+              <p>The app accepts one `.xlsx` file and processes all relevant sheets.</p>
             </div>
 
             <form class="upload-form">
               <label class="field file-field">
-                <span class="field-label">Fișier Excel</span>
+                <span class="field-label">Excel File</span>
                 <span class="file-drop">
                   <span class="file-token" aria-hidden="true">
                     <img src="/excel-icon.svg" alt="" />
                   </span>
                   <span class="file-copy">
-                    <strong>Alege fișierul exportat din EPLAN</strong>
-                    <small>Un singur fișier `.xlsx`, maximum 50 MB.</small>
+                    <strong>Choose the file exported from EPLAN</strong>
+                    <small>One `.xlsx` file, maximum 50 MB.</small>
                   </span>
-                  <span class="file-name">Niciun fișier selectat</span>
+                  <span class="file-name">No file selected</span>
                 </span>
                 <input class="upload-files" name="files" type="file" accept=".xlsx" required />
               </label>
 
               <div class="form-actions">
-                <button class="submit-button" type="submit">Generează etichete</button>
+                <button class="submit-button" type="submit">Generate labels</button>
                 <button class="cancel-button secondary-button danger-button" type="button" hidden disabled>
-                  Anulează analiza
+                  Cancel analysis
                 </button>
               </div>
             </form>
 
-            <p class="status idle upload-status">Selectează un fișier `.xlsx` pentru procesare.</p>
+            <p class="status idle upload-status">Select a `.xlsx` file for processing.</p>
           </section>
 
           <section class="card upload-card soon-card" aria-disabled="true">
             <div class="card-intro">
-              <p class="section-kicker">În curând</p>
-              <h2>Încărcare fișier Consum</h2>
-              <p>Fluxul pentru fișiere de consum este pregătit pentru activare ulterioară.</p>
+              <p class="section-kicker">Coming soon</p>
+              <h2>Upload Consumption File</h2>
+              <p>The consumption file flow is prepared for a future release.</p>
             </div>
 
             <div class="field">
-              <span class="field-label">Fișier Excel</span>
+              <span class="field-label">Excel File</span>
               <div class="fake-file-input" aria-hidden="true">
-                <span class="fake-file-button">Alege fișierul</span>
-                <span class="fake-file-name">Funcționalitate indisponibilă momentan</span>
+                <span class="fake-file-button">Choose file</span>
+                <span class="fake-file-name">Feature currently unavailable</span>
               </div>
             </div>
 
-            <button class="submit-button" type="button" disabled>În curând</button>
+            <button class="submit-button" type="button" disabled>Coming soon</button>
           </section>
         </div>
 
@@ -110,17 +113,17 @@
           <section class="card results-card">
             <div class="section-heading">
               <div>
-                <p class="section-kicker">Rezultate</p>
-                <h2>Fișiere generate</h2>
+                <p class="section-kicker">Results</p>
+                <h2>Generated files</h2>
               </div>
               <p>
-                După procesare vei primi fișierul Excel generat, pregătit pentru descărcare.
+                After processing, the generated Excel file will be ready for download.
               </p>
             </div>
             <div id="results" class="results-grid" aria-live="polite">
               <div class="empty-state">
-                <strong>Nu există fișiere procesate încă.</strong>
-                <span>Încarcă un fișier `.xlsx` pentru a începe generarea etichetelor.</span>
+                <strong>No processed files yet.</strong>
+                <span>Upload a `.xlsx` file to start generating labels.</span>
               </div>
             </div>
           </section>
@@ -128,38 +131,62 @@
           <section class="card process-card process-panel" data-process-state="idle">
             <div class="process-header">
               <div>
-                <p class="section-kicker">Stare procesare</p>
-                <h2>Monitorizare lucrare</h2>
+                <p class="section-kicker">Live workflow</p>
+                <h2>Processing status</h2>
               </div>
-              <span id="processBadge" class="process-badge idle">În așteptare</span>
+              <span id="processBadge" class="process-badge idle">Waiting</span>
             </div>
 
-            <div class="process-steps" aria-label="Pași procesare">
+            <div class="process-visual" aria-hidden="true">
+              <div class="process-core">
+                <span class="core-ring"></span>
+                <span class="core-dot"></span>
+                <span class="core-pulse"></span>
+              </div>
+              <div class="process-track">
+                <span></span>
+              </div>
+              <div class="process-metrics">
+                <span>Validate</span>
+                <span>Extract</span>
+                <span>Generate</span>
+              </div>
+            </div>
+
+            <div class="process-steps" aria-label="Processing steps">
               <div class="process-step">
                 <span class="step-dot"></span>
                 <div>
-                  <strong>Validare fișier</strong>
-                  <span>Verificare format `.xlsx` și pregătire pentru procesare.</span>
+                  <strong>File validation</strong>
+                  <span>Checking `.xlsx` format and preparing it for processing.</span>
                 </div>
               </div>
               <div class="process-step">
                 <span class="step-dot"></span>
                 <div>
-                  <strong>Extracție etichete</strong>
-                  <span>Citire foi relevante, borne, cabluri și echipamente.</span>
+                  <strong>Label extraction</strong>
+                  <span>Reading relevant sheets, terminals, cables, and equipment.</span>
                 </div>
               </div>
               <div class="process-step">
                 <span class="step-dot"></span>
                 <div>
-                  <strong>Generare Excel</strong>
-                  <span>Rezultatul final apare în zona de descărcare.</span>
+                  <strong>Excel generation</strong>
+                  <span>The final result appears in the download area.</span>
                 </div>
               </div>
             </div>
           </section>
         </div>
       </main>
+    </div>
+
+    <div id="loginSuccessScreen" class="login-success-screen" hidden aria-live="polite">
+      <div class="login-success-card">
+        <span class="success-orbit" aria-hidden="true"></span>
+        <strong>Login successful</strong>
+        <span>Opening AI EPLAN Labels</span>
+      </div>
     </div>
 
     <script type="module" src="/app.js"></script>
